@@ -3,13 +3,14 @@
 // @namespace   none
 // @description A script to improve browsing on search.epfl.ch
 // @include     https://search.epfl.ch/*
-// @version     0.3
+// @version     0.4
 // @grant       GM_xmlhttpRequest
 // @grant       GM_addStyle
 // @require     https://code.jquery.com/jquery-3.3.1.min.js
 // @require     https://gist.github.com/raw/2625891/waitForKeyElements.js
 // @downloadURL https://raw.githubusercontent.com/epfl-dojo/EPFL_Search_UserScript/master/EPFL_Search.user.js
 // @author      EPFL-dojo
+// @run-at      document-end
 // ==/UserScript==
 
 // Avoid conflicts
@@ -17,18 +18,14 @@ this.$ = this.jQuery = jQuery.noConflict(true);
 
 // Handle page/URL changes without a proper reload
 // see https://stackoverflow.com/a/17385193/960623
-window.addEventListener('hashchange', fireOnNewPage,  false);
-waitForKeyElements('.results', appMain);
+waitForKeyElements('.loader', appMainWait);
 
-function fireOnNewPage () {
-  if (location.hash.toLowerCase() == '.results') {
-    appMain();
-  }
+// Default load without reloading
+appMain();
+function appMainWait(){
+  window.setTimeout(appMain, 1200);
 }
-fireOnNewPage();   //-- Initial run on initial, full page load.
-
 function appMain() {
-  
   GM_addStyle ( `
     .epfl-search-user-info {
         float: right;
@@ -73,10 +70,15 @@ function appMain() {
           method: 'GET',
           url: 'https://people.epfl.ch/cgi-bin/people?id=' + sciper + '&op=admindata&lang=en&cvlang=',
           onload: function(response) {
-            var username = response.responseText.match(/Username: (\w+)\s/)[1];
-            if (username) {
+            try
+            {
+              var username = response.responseText.match(/Username: (\w+)\s/)[1];
               $('.username', $(e).parent()).html(username);
               $('.username', $(e).parent()).prepend('/');
+            }
+            catch(e)
+            {
+              //console.log("username not found, e.g. outside EPFL network without VPN");
             }
           }
         });
