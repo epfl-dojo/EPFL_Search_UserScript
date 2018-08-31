@@ -3,7 +3,7 @@
 // @namespace   none
 // @description A script to improve browsing on search.epfl.ch
 // @include     https://search.epfl.ch/*
-// @version     0.1.1
+// @version     0.2
 // @grant       GM_xmlhttpRequest
 // @grant       GM_addStyle
 // @require     https://code.jquery.com/jquery-3.3.1.min.js
@@ -47,7 +47,7 @@ function appMain() {
 
         if (!$('div.portrait.no-photo', $(html)).length) {
           var imgLink = 'https://people.epfl.ch//private/common/photos/links/' + sciper;
-          $(e).parent().prepend('<img class="mugshot" style="margin-right: 10px; max-width: 60px;" src="' + imgLink + '">');
+          $(e).parent().prepend('<img class="mugshot" style="margin-right: 10px; max-height: 1.35em;" src="' + imgLink + '">');
         }
 
         GM_xmlhttpRequest({
