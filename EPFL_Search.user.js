@@ -3,7 +3,7 @@
 // @namespace   none
 // @description A script to improve browsing on search.epfl.ch
 // @include     https://search.epfl.ch/*
-// @version     0.2
+// @version     0.3
 // @grant       GM_xmlhttpRequest
 // @grant       GM_addStyle
 // @require     https://code.jquery.com/jquery-3.3.1.min.js
@@ -28,9 +28,22 @@ function fireOnNewPage () {
 fireOnNewPage();   //-- Initial run on initial, full page load.
 
 function appMain() {
+  
+  GM_addStyle ( `
+    .epfl-search-user-info {
+        float: right;
+    }
+    .epfl-search-user-mugshot {
+      margin-right: 10px; 
+    }
+    .epfl-search-user-mugshot-zoom-off {
+      max-height: 1.35em;
+    }
+  ` );
+  
   $('.result a[href*="https://people.epfl.ch/"]').each(function(i,e){
     profile_url = $(e).attr('href');
-    $(e).parent().append('<div style="float: right;">'
+    $(e).parent().append('<div class="epfl-search-user-info">'
                          + '<span class="sciper"></span>'
                          + '<span class="username"></span></div>');
     GM_xmlhttpRequest({
@@ -47,7 +60,13 @@ function appMain() {
 
         if (!$('div.portrait.no-photo', $(html)).length) {
           var imgLink = 'https://people.epfl.ch//private/common/photos/links/' + sciper;
-          $(e).parent().prepend('<img class="mugshot" style="margin-right: 10px; max-height: 1.35em;" src="' + imgLink + '">');
+          $(e).parent().prepend('<img class="epfl-search-user-mugshot epfl-search-user-mugshot-zoom-off" id="' + sciper + '_mug" src="' + imgLink + '">');
+          $('.mugshot').hover(function() {
+            $(this).css('cursor', 'pointer');
+          });
+          $('#' + sciper + '_mug').click(function() {
+            $(this).toggleClass('epfl-search-user-mugshot-zoom-off');
+          });
         }
 
         GM_xmlhttpRequest({
