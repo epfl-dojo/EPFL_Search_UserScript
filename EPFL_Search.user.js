@@ -3,7 +3,7 @@
 // @namespace   none
 // @description A script to improve browsing on search.epfl.ch
 // @include     https://search.epfl.ch/*
-// @version     0.1
+// @version     0.1.1
 // @grant       GM_xmlhttpRequest
 // @grant       GM_addStyle
 // @require     https://code.jquery.com/jquery-3.3.1.min.js
@@ -29,12 +29,10 @@ fireOnNewPage();   //-- Initial run on initial, full page load.
 
 function appMain() {
   $('.result a[href*="https://people.epfl.ch/"]').each(function(i,e){
-    console.log($(e).attr('href'));
     profile_url = $(e).attr('href');
     $(e).parent().append('<div style="float: right;">'
                          + '<span class="sciper"></span>'
                          + '<span class="username"></span></div>');
-    console.log('GM_xmlhttpRequest');
     GM_xmlhttpRequest({
       method: 'GET',
       url: profile_url,
